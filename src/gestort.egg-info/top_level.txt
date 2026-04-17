@@ -1,0 +1,6 @@
+assets
+basedatos
+controller
+main
+models
+views

@@ -1,0 +1,13 @@
+README.md
+pyproject.toml
+src/main.py
+src/controller/controllers.py
+src/controller/turno_controller.py
+src/gestort.egg-info/PKG-INFO
+src/gestort.egg-info/SOURCES.txt
+src/gestort.egg-info/dependency_links.txt
+src/gestort.egg-info/entry_points.txt
+src/gestort.egg-info/requires.txt
+src/gestort.egg-info/top_level.txt
+src/models/modelo.py
+src/views/view.py
