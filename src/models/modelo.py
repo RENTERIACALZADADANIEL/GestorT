@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import List, Dict
 
 class Usuario:
@@ -20,11 +19,10 @@ class Laboratorio:
         self.objetos: List[Objeto] = []
 
 class Reserva:
-    def __init__(self, id_reserva: int, laboratorio_id: int, maestro: str, inicio: datetime, fin: datetime):
+    def __init__(self, id_reserva: int, laboratorio_id: int, maestro: str, fecha: str, horario: str):
         self.id = id_reserva
         self.laboratorio_id = laboratorio_id
         self.maestro = maestro
-        self.inicio = inicio
-        self.fin = fin
-        self.estado = "Pendiente"  # Pendiente, Aprobada, Rechazada
-        self.asignaciones: Dict[str, str] = {}  # { "Nombre Alumno": "Nombre Objeto" }
+        self.fecha = fecha
+        self.horario = horario
+        self.asignaciones: Dict[str, str] = {} # Almacena { "Nombre del Alumno": "Nombre del Objeto" }
