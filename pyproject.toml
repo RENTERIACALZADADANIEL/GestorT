@@ -1,19 +1,19 @@
 [project]
 name = "gestort"
 version = "0.1.0"
-description = "Add your description here"
+description = "Sistema de Gestión de Laboratorios"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "flet>=0.84.0",
+    "mysql-connector-python>=9.7.0",
+    "python-dotenv>=1.2.2",
 ]
 
 [project.scripts]
-app="main:main"
+app = "src.main:main"
 
 [tool.uv]
-package=true
+package = true
 
 [tool.setuptools.package-dir]
-
-""="src"
+"" = "src"
