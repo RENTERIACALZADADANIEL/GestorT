@@ -1,4 +1,4 @@
-from .database import Database
+from src.models.database import Database
 
 class Laboratorio:
     def __init__(self, id=None, nombre=None, estado='disponible', created_at=None):

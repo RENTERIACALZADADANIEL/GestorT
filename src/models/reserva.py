@@ -1,5 +1,6 @@
-from .database import Database
+
 from datetime import datetime, time, timedelta
+from src.models.database import Database
 
 class Reserva:
     def __init__(self, id=None, laboratorio_id=None, usuario_id=None, fecha=None, 

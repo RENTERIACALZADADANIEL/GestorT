@@ -1,4 +1,4 @@
-from models.database import Database
+from src.models.database import Database
 import hashlib
 
 class Usuario:

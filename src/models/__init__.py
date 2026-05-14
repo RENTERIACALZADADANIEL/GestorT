@@ -1,7 +1,10 @@
-from .database import Database
-from .usuario import Usuario
-from .laboratorio import Laboratorio
-from .reserva import Reserva
-from .inventario import Inventario
+from src.models.database import Database
+from src.models.usuario import Usuario
+from src.models.laboratorio import Laboratorio
+from src.models.reserva import Reserva
+from src.models.inventario import Inventario
+from src.models.solicitud_prestamo import SolicitudPrestamo
+from src.models.prestamo_activo import PrestamoActivo
 
-__all__ = ['Database', 'Usuario', 'Laboratorio', 'Reserva', 'Inventario']
+__all__ = ['Database', 'Usuario', 'Laboratorio', 'Reserva', 
+           'Inventario', 'SolicitudPrestamo', 'PrestamoActivo']
