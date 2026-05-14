@@ -16,14 +16,14 @@ class Usuario:
         return hashlib.sha256(password.encode()).hexdigest()
     
     def save(self):
-        """Crea un nuevo usuario"""
+        """Crea un nuevo usuario (siempre guarda con hash)"""
         query = """
         INSERT INTO usuarios (username, password, rol) 
         VALUES (%s, %s, %s)
         """
         params = (
             self.username,
-            self.hash_password(self.password),  # Guardar con hash
+            self.hash_password(self.password),
             self.rol
         )
         return self.db.execute_insert(query, params)
@@ -53,19 +53,35 @@ class Usuario:
     @classmethod
     def verify_login(cls, username, password):
         """
-        Verifica las credenciales de inicio de sesión
-        Primero intenta comparar sin hash (para usuarios existentes)
-        Luego intenta con hash (para nuevos usuarios)
+        Verifica las credenciales de inicio de sesión.
+        Soporta tanto contraseñas en texto plano (legacy) como hasheadas.
+        Si encuentra una contraseña en texto plano, la actualiza automáticamente a hash.
         """
         user = cls.get_by_username(username)
-        if user:
-            # Intentar primero sin hash (texto plano - usuarios antiguos)
-            if user.password == password:
+        if not user:
+            return None
+        
+        stored_password = user.password
+        
+        # CASO 1: La contraseña almacenada ya es un hash (64 caracteres SHA-256)
+        if len(stored_password) == 64:
+            if stored_password == cls.hash_password(password):
                 return user
-            
-            # Intentar con hash (nuevos usuarios registrados con hash)
-            if user.password == cls.hash_password(password):
-                return user
+            else:
+                return None
+        
+        # CASO 2: La contraseña está en texto plano (legacy)
+        # Comparar directamente y actualizar a hash automáticamente
+        if stored_password == password:
+            # Actualizar a hash sin que el usuario se dé cuenta
+            db = Database()
+            db.execute_insert(
+                "UPDATE usuarios SET password = %s WHERE id = %s",
+                (cls.hash_password(password), user.id)
+            )
+            # Actualizar el objeto en memoria
+            user.password = cls.hash_password(password)
+            return user
         
         return None
     
@@ -78,7 +94,7 @@ class Usuario:
         return [cls(**user_data) for user_data in results] if results else []
     
     def update(self):
-        """Actualiza los datos del usuario"""
+        """Actualiza los datos del usuario (no cambia password)"""
         query = """
         UPDATE usuarios 
         SET username = %s, rol = %s 

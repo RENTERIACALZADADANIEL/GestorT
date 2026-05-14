@@ -1,13 +1,14 @@
-from .database import Database
+from src.models.database import Database
 
 class Inventario:
     def __init__(self, id=None, laboratorio_id=None, item_nombre=None, 
-                 cantidad_total=None, created_at=None):
+                 cantidad_total=None, created_at=None, laboratorio_nombre=None):  # 👈 Agregar parámetro
         self.id = id
         self.laboratorio_id = laboratorio_id
         self.item_nombre = item_nombre
         self.cantidad_total = cantidad_total
         self.created_at = created_at
+        self.laboratorio_nombre = laboratorio_nombre  # 👈 Guardar referencia
         self.db = Database()
     
     def save(self):
@@ -31,9 +32,7 @@ class Inventario:
         """
         result = db.execute_query(query, (item_id,))
         if result:
-            item = cls(**result[0])
-            item.laboratorio_nombre = result[0]['laboratorio_nombre']
-            return item
+            return cls(**result[0])
         return None
     
     @classmethod
@@ -48,13 +47,7 @@ class Inventario:
         ORDER BY i.item_nombre
         """
         results = db.execute_query(query, (laboratorio_id,))
-        items = []
-        if results:
-            for data in results:
-                item = cls(**data)
-                item.laboratorio_nombre = data['laboratorio_nombre']
-                items.append(item)
-        return items
+        return [cls(**data) for data in results] if results else []
     
     @classmethod
     def get_all(cls):
@@ -67,13 +60,7 @@ class Inventario:
         ORDER BY l.nombre, i.item_nombre
         """
         results = db.execute_query(query)
-        items = []
-        if results:
-            for data in results:
-                item = cls(**data)
-                item.laboratorio_nombre = data['laboratorio_nombre']
-                items.append(item)
-        return items
+        return [cls(**data) for data in results] if results else []
     
     def update(self):
         """Actualiza un item del inventario"""
@@ -103,6 +90,6 @@ class Inventario:
             'laboratorio_id': self.laboratorio_id,
             'item_nombre': self.item_nombre,
             'cantidad_total': self.cantidad_total,
-            'laboratorio_nombre': getattr(self, 'laboratorio_nombre', None),
+            'laboratorio_nombre': self.laboratorio_nombre,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S') if self.created_at else None
         }

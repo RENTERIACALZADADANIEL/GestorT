@@ -40,8 +40,9 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `username`, `password`, `rol`, `created_at`) VALUES
-(1, 'admin', 'admin123', 'admin', '2026-05-13 04:55:17'),
-(2, 'maestro1', 'maestro123', 'maestro', '2026-05-13 04:55:17');
+(1, 'tester', 'developer', 'admin', '2026-05-13 04:55:17'),
+(2, 'admin', 'admin123', 'admin', '2026-05-13 04:55:17'),
+(3, 'maestro1', 'maestro123', 'maestro', '2026-05-13 04:55:17');
 
 -- --------------------------------------------------------
 
@@ -109,15 +110,6 @@ CREATE TABLE `reservas` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `reservas`
---
-
-INSERT INTO `reservas` (`id`, `laboratorio_id`, `usuario_id`, `fecha`, `hora_inicio`, `hora_fin`, `estado`, `created_at`) VALUES
-(1, 1, 2, '2026-05-14', '07:00:00', '07:45:00', 'activa', '2026-05-13 04:55:17'),
-(2, 1, 2, '2026-05-14', '08:30:00', '09:15:00', 'activa', '2026-05-13 04:55:17'),
-(3, 2, 2, '2026-05-15', '10:20:00', '11:05:00', 'cancelada', '2026-05-13 04:55:17');
-
 -- --------------------------------------------------------
 
 --
@@ -131,16 +123,6 @@ CREATE TABLE `inventario` (
   `cantidad_total` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `inventario`
---
-
-INSERT INTO `inventario` (`id`, `laboratorio_id`, `item_nombre`, `cantidad_total`, `created_at`) VALUES
-(1, 1, 'Computadoras', 30, '2026-05-13 04:55:17'),
-(2, 1, 'Proyectores', 2, '2026-05-13 04:55:17'),
-(3, 2, 'Tubos de ensayo', 100, '2026-05-13 04:55:17'),
-(4, 2, 'Mecheros Bunsen', 15, '2026-05-13 04:55:17');
 
 --
 -- Índices para tablas volcadas
@@ -189,7 +171,7 @@ ALTER TABLE `inventario`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `laboratorios`
@@ -207,13 +189,13 @@ ALTER TABLE `bloques_horario`
 -- AUTO_INCREMENT de la tabla `reservas`
 --
 ALTER TABLE `reservas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT de la tabla `inventario`
 --
 ALTER TABLE `inventario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- Restricciones para tablas volcadas
