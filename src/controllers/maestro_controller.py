@@ -1,4 +1,4 @@
-from models import Laboratorio, Reserva
+from src.models import Laboratorio, Reserva
 from datetime import datetime, date, timedelta
 
 class MaestroController:

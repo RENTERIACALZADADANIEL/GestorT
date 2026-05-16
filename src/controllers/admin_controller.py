@@ -1,4 +1,4 @@
-from models import Laboratorio, Reserva, Usuario, Inventario
+from src.models import Laboratorio, Reserva, Usuario, Inventario
 from datetime import datetime, date
 
 class AdminController:

@@ -21,6 +21,7 @@ class SolicitudPrestamo:
         self.usuario_nombre = None
         self.item_nombre = None
         self.laboratorio_nombre = None
+        self.cantidad_disponible = 0
     
     def save(self):
         """Crea una nueva solicitud de préstamo"""
@@ -56,7 +57,8 @@ class SolicitudPrestamo:
         db = Database()
         query = """
         SELECT s.*, u.username as usuario_nombre, 
-               i.item_nombre, l.nombre as laboratorio_nombre
+               i.item_nombre, l.nombre as laboratorio_nombre,
+               i.cantidad_disponible
         FROM solicitudes_prestamo s
         JOIN usuarios u ON s.usuario_id = u.id
         JOIN inventario i ON s.inventario_id = i.id
@@ -72,7 +74,8 @@ class SolicitudPrestamo:
         db = Database()
         query = """
         SELECT s.*, u.username as usuario_nombre, 
-               i.item_nombre, l.nombre as laboratorio_nombre
+               i.item_nombre, l.nombre as laboratorio_nombre,
+               i.cantidad_disponible
         FROM solicitudes_prestamo s
         JOIN usuarios u ON s.usuario_id = u.id
         JOIN inventario i ON s.inventario_id = i.id
@@ -132,7 +135,7 @@ class SolicitudPrestamo:
             'item_nombre': self.item_nombre,
             'laboratorio_nombre': self.laboratorio_nombre,
             'cantidad_solicitada': self.cantidad_solicitada,
-            'cantidad_disponible': getattr(self, 'cantidad_disponible', 0),
+            'cantidad_disponible': self.cantidad_disponible,
             'estado': self.estado,
             'fecha_solicitud': self.fecha_solicitud.strftime('%Y-%m-%d %H:%M:%S') if self.fecha_solicitud else None,
             'fecha_respuesta': self.fecha_respuesta.strftime('%Y-%m-%d %H:%M:%S') if self.fecha_respuesta else None,

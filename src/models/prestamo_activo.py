@@ -22,7 +22,6 @@ class PrestamoActivo:
     
     def save(self):
         """Registra un préstamo activo y actualiza inventario"""
-        # Iniciar transacción
         connection = self.db.connect()
         cursor = connection.cursor()
         
@@ -36,7 +35,7 @@ class PrestamoActivo:
             cursor.execute(query, (self.solicitud_id, self.usuario_id, 
                                    self.inventario_id, self.cantidad_prestada))
             
-            # Actualizar inventario
+            # Actualizar inventario (restar disponible, sumar prestado)
             query = """
             UPDATE inventario 
             SET cantidad_disponible = cantidad_disponible - %s,
@@ -69,7 +68,7 @@ class PrestamoActivo:
             """
             cursor.execute(query, (self.id,))
             
-            # Actualizar inventario
+            # Actualizar inventario (sumar disponible, restar prestado)
             query = """
             UPDATE inventario 
             SET cantidad_disponible = cantidad_disponible + %s,
@@ -90,7 +89,7 @@ class PrestamoActivo:
     
     @classmethod
     def get_activos(cls):
-        """Obtiene todos los préstamos activos"""
+        """Obtiene todos los préstamos activos (prestados)"""
         db = Database()
         query = """
         SELECT p.*, u.username as usuario_nombre, 
@@ -106,7 +105,24 @@ class PrestamoActivo:
         return [cls._create_with_details(data) for data in results] if results else []
     
     @classmethod
+    def get_all(cls):
+        """Obtiene todos los préstamos (historial completo)"""
+        db = Database()
+        query = """
+        SELECT p.*, u.username as usuario_nombre, 
+               i.item_nombre, l.nombre as laboratorio_nombre
+        FROM prestamos_activos p
+        JOIN usuarios u ON p.usuario_id = u.id
+        JOIN inventario i ON p.inventario_id = i.id
+        JOIN laboratorios l ON i.laboratorio_id = l.id
+        ORDER BY p.fecha_prestamo DESC
+        """
+        results = db.execute_query(query)
+        return [cls._create_with_details(data) for data in results] if results else []
+    
+    @classmethod
     def _create_with_details(cls, data):
+        """Crea objeto con datos de JOINs"""
         prestamo = cls(
             id=data['id'],
             solicitud_id=data['solicitud_id'],
@@ -123,6 +139,7 @@ class PrestamoActivo:
         return prestamo
     
     def to_dict(self):
+        """Convierte a diccionario"""
         return {
             'id': self.id,
             'solicitud_id': self.solicitud_id,

@@ -1,4 +1,4 @@
-from models import Usuario
+from src.models import Usuario
 from datetime import datetime
 
 class AuthController:
