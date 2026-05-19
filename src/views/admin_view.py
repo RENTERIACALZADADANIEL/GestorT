@@ -226,6 +226,7 @@ class AdminView:
             messagebox.showinfo("Éxito", message)
             self.lab_nombre_entry.delete(0, tk.END)
             self.cargar_laboratorios()
+            self.cargar_laboratorios_combo()  # Actualizar combo de inventario
         else:
             messagebox.showerror("Error", message)
     
@@ -245,6 +246,7 @@ class AdminView:
         if success:
             messagebox.showinfo("Éxito", message)
             self.cargar_laboratorios()
+            self.cargar_laboratorios_combo()  # Actualizar combo de inventario
         else:
             messagebox.showerror("Error", message)
     
@@ -263,6 +265,7 @@ class AdminView:
             if success:
                 messagebox.showinfo("Éxito", message)
                 self.cargar_laboratorios()
+                self.cargar_laboratorios_combo()  # Actualizar combo de inventario
             else:
                 messagebox.showerror("Error", message)
     
@@ -576,6 +579,7 @@ class AdminView:
                 self.cargar_solicitudes_pendientes()
                 self.cargar_prestamos_activos()
                 self.cargar_inventario()
+                self.cargar_historial()
             else:
                 messagebox.showerror("Error", message)
     
@@ -599,6 +603,7 @@ class AdminView:
             if success:
                 messagebox.showinfo("Éxito", "❌ " + message)
                 self.cargar_solicitudes_pendientes()
+                self.cargar_historial()
             else:
                 messagebox.showerror("Error", message)
     
@@ -642,24 +647,19 @@ class AdminView:
                 ))
     
     def cargar_historial(self):
-        """Carga el historial de préstamos (todos)"""
+        """Carga el historial completo de préstamos"""
         for item in self.historial_tree.get_children():
             self.historial_tree.delete(item)
         
-        # Obtener todos los préstamos (activos y devueltos)
-        from src.models.prestamo_activo import PrestamoActivo
-        prestamos = PrestamoActivo.get_activos()  # Solo activos por ahora
+        success, prestamos = self.prestamo_controller.obtener_prestamos_historial()
         
-        # También podrías crear un método get_all() en PrestamoActivo
-        # para obtener el historial completo
-        
-        if prestamos:
+        if success:
             for pres in prestamos:
-                estado_str = '📦 Prestado' if pres.estado == 'prestado' else '✅ Devuelto'
-                fecha_dev = pres.fecha_devolucion.strftime('%Y-%m-%d %H:%M:%S') if pres.fecha_devolucion else 'En uso'
+                estado_str = '📦 Prestado' if pres['estado'] == 'prestado' else '✅ Devuelto'
+                fecha_dev = pres.get('fecha_devolucion', 'En uso') if pres.get('fecha_devolucion') else 'En uso'
                 self.historial_tree.insert('', 'end', values=(
-                    pres.id, pres.usuario_nombre, pres.item_nombre,
-                    pres.laboratorio_nombre, pres.cantidad_prestada,
+                    pres['id'], pres['usuario_nombre'], pres['item_nombre'],
+                    pres['laboratorio_nombre'], pres['cantidad_prestada'],
                     estado_str, fecha_dev
                 ))
     
