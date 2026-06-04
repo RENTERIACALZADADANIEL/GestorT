@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
-from controllers import AuthController
+from src.controllers import AuthController
 
 class RegistroView:
     def __init__(self, parent, callback):

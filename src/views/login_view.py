@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
-from controllers import AuthController
+from src.controllers import AuthController
 
 class LoginView:
     def __init__(self, root):
@@ -156,14 +156,14 @@ class LoginView:
     
     def abrir_admin_view(self, user_data):
         """Abre la vista de administrador"""
-        from views.admin_view import AdminView  # Importación local para evitar referencia circular
+        from src.views.admin_view import AdminView  # Importación local para evitar referencia circular
         
         admin_window = tk.Toplevel(self.root)
         admin_app = AdminView(admin_window, user_data, self.volver_login)  # Variable local, no de instancia
     
     def abrir_maestro_view(self, user_data):
         """Abre la vista de maestro"""
-        from views.maestro_view import MaestroView  # Importación local para evitar referencia circular
+        from src.views.maestro_view import MaestroView  # Importación local para evitar referencia circular
         
         maestro_window = tk.Toplevel(self.root)
         maestro_app = MaestroView(maestro_window, user_data, self.volver_login)  # Variable local, no de instancia

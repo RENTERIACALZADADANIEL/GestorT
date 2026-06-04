@@ -10,10 +10,11 @@ dependencies = [
 ]
 
 [project.scripts]
-app = "src.main:main"
+gestort = "src.main:main"  # 👈 Cambiado de "app" a "gestort" o mantén "app"
 
 [tool.uv]
 package = true
 
-[tool.setuptools.package-dir]
-"" = "src"
+[tool.setuptools.packages.find]
+where = ["."]
+
