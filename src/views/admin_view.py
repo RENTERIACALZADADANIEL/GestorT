@@ -295,6 +295,9 @@ class AdminView:
         tk.Button(btn_frame, text="Registrar Nuevo Usuario", command=self.abrir_registro,
                  bg='#27ae60', fg='white', font=('Arial', 10), bd=0, padx=15, pady=5, cursor='hand2').pack(side='left', padx=5)
         
+        tk.Button(btn_frame, text="🔑 Cambiar Contraseña", command=self.cambiar_password_usuario,
+                 bg='#f39c12', fg='white', font=('Arial', 10), bd=0, padx=15, pady=5, cursor='hand2').pack(side='left', padx=5)
+        
         tk.Button(btn_frame, text="Eliminar Seleccionado", command=self.eliminar_usuario,
                  bg='#e74c3c', fg='white', font=('Arial', 10), bd=0, padx=15, pady=5, cursor='hand2').pack(side='left', padx=5)
         
@@ -312,6 +315,55 @@ class AdminView:
                     user['id'], user['username'], user['rol'], user['created_at']
                 ))
     
+    def cambiar_password_usuario(self):
+        """Abre dialog para cambiar contraseña del usuario seleccionado"""
+        selection = self.user_tree.selection()
+        if not selection:
+            messagebox.showwarning("Atención", "Selecciona un usuario primero")
+            return
+
+        item = self.user_tree.item(selection[0])
+        user_id = item['values'][0]
+        username = item['values'][1]
+
+        dialog = tk.Toplevel(self.root)
+        dialog.title(f"Cambiar contraseña - {username}")
+        dialog.geometry("320x200")
+        dialog.resizable(False, False)
+        dialog.configure(bg='#ecf0f1')
+        dialog.grab_set()
+
+        tk.Label(dialog, text=f"Nueva contraseña para '{username}':",
+                 bg='#ecf0f1', font=('Arial', 10)).pack(pady=(20, 5))
+
+        pass_entry = tk.Entry(dialog, show="•", font=('Arial', 11), bd=2, relief='groove', width=28)
+        pass_entry.pack(pady=5)
+        pass_entry.focus()
+
+        tk.Label(dialog, text="Confirmar contraseña:",
+                 bg='#ecf0f1', font=('Arial', 10)).pack(pady=(10, 5))
+
+        confirm_entry = tk.Entry(dialog, show="•", font=('Arial', 11), bd=2, relief='groove', width=28)
+        confirm_entry.pack(pady=5)
+
+        def confirmar():
+            nueva = pass_entry.get().strip()
+            confirmar_pass = confirm_entry.get().strip()
+            if nueva != confirmar_pass:
+                messagebox.showerror("Error", "Las contraseñas no coinciden", parent=dialog)
+                return
+            success, message = self.auth_controller.admin_cambiar_password(user_id, nueva, self.user_data['id'])
+            if success:
+                messagebox.showinfo("Éxito", message, parent=dialog)
+                dialog.destroy()
+            else:
+                messagebox.showerror("Error", message, parent=dialog)
+
+        tk.Button(dialog, text="Guardar", command=confirmar,
+                 bg='#27ae60', fg='white', font=('Arial', 10), bd=0, padx=20, pady=5, cursor='hand2').pack(pady=15)
+
+        dialog.bind('<Return>', lambda e: confirmar())
+
     def abrir_registro(self):
         """Abre la ventana de registro de usuarios"""
         RegistroView(self.root, self.cargar_usuarios)

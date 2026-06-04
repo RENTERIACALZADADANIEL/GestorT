@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-05-2026 a las 02:25:37
+-- Tiempo de generación: 05-06-2026 a las 01:48:15
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -70,7 +70,12 @@ CREATE TABLE `inventario` (
 
 INSERT INTO `inventario` (`id`, `laboratorio_id`, `item_nombre`, `cantidad_total`, `cantidad_disponible`, `cantidad_prestada`, `created_at`) VALUES
 (3, 2, 'computadoras', 45, 45, 0, '2026-05-14 22:33:20'),
-(4, 2, 'pipote', 50, 50, 0, '2026-05-14 22:47:56');
+(4, 2, 'pipote', 50, 50, 0, '2026-05-14 22:47:56'),
+(5, 6, 'Hoja de corte', 4, 4, 0, '2026-05-24 03:12:27'),
+(6, 7, 'cable ethernet', 15, 15, 0, '2026-06-04 00:38:53'),
+(7, 6, 'serrucho', 3, 3, 0, '2026-06-04 23:19:11'),
+(8, 9, 'proyector', 7, 7, 0, '2026-06-04 23:33:15'),
+(9, 10, 'controol', 1, 1, 0, '2026-06-04 23:47:03');
 
 -- --------------------------------------------------------
 
@@ -92,7 +97,14 @@ CREATE TABLE `laboratorios` (
 INSERT INTO `laboratorios` (`id`, `nombre`, `estado`, `created_at`) VALUES
 (1, 'Laboratorio de Computación', 'disponible', '2026-05-13 23:10:09'),
 (2, 'Laboratorio de Química', 'disponible', '2026-05-13 23:10:09'),
-(3, 'Laboratorio de Física', 'mantenimiento', '2026-05-13 23:10:09');
+(3, 'Laboratorio de Física', 'mantenimiento', '2026-05-13 23:10:09'),
+(4, 'gimna', 'disponible', '2026-05-19 22:47:22'),
+(5, 'sala5', 'disponible', '2026-05-19 22:58:41'),
+(6, 'Laboratorio de carpinteria', 'disponible', '2026-05-24 03:11:26'),
+(7, 'p1', 'disponible', '2026-06-04 00:38:28'),
+(8, 'p2', 'disponible', '2026-06-04 23:19:23'),
+(9, 'sala1', 'disponible', '2026-06-04 23:32:25'),
+(10, 'lab22', 'disponible', '2026-06-04 23:46:16');
 
 -- --------------------------------------------------------
 
@@ -116,7 +128,10 @@ CREATE TABLE `prestamos_activos` (
 --
 
 INSERT INTO `prestamos_activos` (`id`, `solicitud_id`, `usuario_id`, `inventario_id`, `cantidad_prestada`, `fecha_prestamo`, `fecha_devolucion`, `estado`) VALUES
-(2, 2, 4, 4, 25, '2026-05-17 00:23:27', '2026-05-17 00:24:49', 'devuelto');
+(6, 7, 7, 7, 2, '2026-06-04 23:21:34', '2026-06-04 23:22:40', 'devuelto'),
+(7, 8, 7, 4, 5, '2026-06-04 23:23:59', '2026-06-04 23:33:35', 'devuelto'),
+(8, 9, 7, 6, 4, '2026-06-04 23:31:51', '2026-06-04 23:33:29', 'devuelto'),
+(9, 11, 7, 6, 2, '2026-06-04 23:47:11', '2026-06-04 23:47:21', 'devuelto');
 
 -- --------------------------------------------------------
 
@@ -140,12 +155,11 @@ CREATE TABLE `reservas` (
 --
 
 INSERT INTO `reservas` (`id`, `laboratorio_id`, `usuario_id`, `fecha`, `hora_inicio`, `hora_fin`, `estado`, `created_at`) VALUES
-(1, 2, 4, '2026-05-13', '07:00:00', '07:45:00', 'cancelada', '2026-05-13 23:21:45'),
-(2, 2, 4, '2026-05-13', '11:05:00', '11:50:00', 'cancelada', '2026-05-13 23:21:48'),
-(3, 2, 5, '2026-05-13', '08:30:00', '09:15:00', 'cancelada', '2026-05-13 23:22:38'),
-(4, 2, 5, '2026-05-13', '10:20:00', '11:05:00', 'cancelada', '2026-05-13 23:22:42'),
-(5, 2, 5, '2026-05-14', '07:45:00', '08:30:00', 'cancelada', '2026-05-14 22:34:21'),
-(6, 2, 5, '2026-05-14', '11:05:00', '11:50:00', 'cancelada', '2026-05-14 22:34:25');
+(13, 7, 7, '2026-06-04', '07:00:00', '07:45:00', 'activa', '2026-06-04 23:34:05'),
+(14, 7, 7, '2026-06-04', '12:35:00', '13:20:00', 'activa', '2026-06-04 23:34:10'),
+(15, 4, 7, '2026-06-04', '07:00:00', '07:45:00', 'cancelada', '2026-06-04 23:45:19'),
+(16, 4, 7, '2026-06-04', '10:20:00', '11:05:00', 'activa', '2026-06-04 23:45:24'),
+(17, 4, 9, '2026-06-04', '07:00:00', '07:45:00', 'activa', '2026-06-04 23:47:56');
 
 -- --------------------------------------------------------
 
@@ -170,8 +184,11 @@ CREATE TABLE `solicitudes_prestamo` (
 --
 
 INSERT INTO `solicitudes_prestamo` (`id`, `usuario_id`, `inventario_id`, `cantidad_solicitada`, `estado`, `fecha_solicitud`, `fecha_respuesta`, `admin_id`, `comentario`) VALUES
-(1, 5, 4, 25, 'aprobada', '2026-05-14 23:59:53', '2026-05-15 00:00:25', 1, NULL),
-(2, 4, 4, 25, 'aprobada', '2026-05-17 00:22:39', '2026-05-17 00:23:27', 1, NULL);
+(7, 7, 7, 2, 'aprobada', '2026-06-04 23:21:09', '2026-06-04 23:21:34', 1, NULL),
+(8, 7, 4, 5, 'aprobada', '2026-06-04 23:23:09', '2026-06-04 23:23:59', 1, NULL),
+(9, 7, 6, 4, 'aprobada', '2026-06-04 23:31:16', '2026-06-04 23:31:51', 1, NULL),
+(10, 7, 6, 8, 'rechazada', '2026-06-04 23:34:28', '2026-06-04 23:35:10', 1, 'Rechazada por administrador'),
+(11, 7, 6, 2, 'aprobada', '2026-06-04 23:45:11', '2026-06-04 23:47:11', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -193,10 +210,9 @@ CREATE TABLE `usuarios` (
 
 INSERT INTO `usuarios` (`id`, `username`, `password`, `rol`, `created_at`) VALUES
 (1, 'tester', '88fa0d759f845b47c044c2cd44e29082cf6fea665c30c146374ec7c8f3d699e3', 'admin', '2026-05-13 23:10:09'),
-(2, 'admin', 'admin123', 'admin', '2026-05-13 23:10:09'),
-(3, 'maestro1', 'maestro123', 'maestro', '2026-05-13 23:10:09'),
-(4, 'lucho', '15e2b0d3c33891ebb0f1ef609ec419420c20e320ce94c65fbc8c3312448eb225', 'maestro', '2026-05-13 23:16:14'),
-(5, 'lucha', '15e2b0d3c33891ebb0f1ef609ec419420c20e320ce94c65fbc8c3312448eb225', 'maestro', '2026-05-13 23:22:13');
+(7, 'maestro', '17756315ebd47b7110359fc7b168179bf6f2df3646fcc888bc8aa05c78b38ac1', 'maestro', '2026-06-04 23:20:37'),
+(8, 'maestro1', '0449fd49186e15e1a167d543897e4a0f3f43c7aea17222d4a6db104481ce6c15', 'maestro', '2026-06-04 23:32:58'),
+(9, 'maestro22', '65fe9217a22aee14bad28de8bdafb98a09c341b0be8656510415cdbb6a49c25b', 'maestro', '2026-06-04 23:46:43');
 
 --
 -- Índices para tablas volcadas
@@ -268,37 +284,37 @@ ALTER TABLE `bloques_horario`
 -- AUTO_INCREMENT de la tabla `inventario`
 --
 ALTER TABLE `inventario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `laboratorios`
 --
 ALTER TABLE `laboratorios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `prestamos_activos`
 --
 ALTER TABLE `prestamos_activos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `reservas`
 --
 ALTER TABLE `reservas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `solicitudes_prestamo`
 --
 ALTER TABLE `solicitudes_prestamo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Restricciones para tablas volcadas

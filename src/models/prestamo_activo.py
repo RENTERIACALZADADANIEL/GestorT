@@ -34,6 +34,7 @@ class PrestamoActivo:
             """
             cursor.execute(query, (self.solicitud_id, self.usuario_id, 
                                    self.inventario_id, self.cantidad_prestada))
+            new_id = cursor.lastrowid
             
             # Actualizar inventario (restar disponible, sumar prestado)
             query = """
@@ -46,7 +47,7 @@ class PrestamoActivo:
                                    self.cantidad_prestada, self.inventario_id))
             
             connection.commit()
-            return cursor.lastrowid
+            return new_id if new_id else True
         except Exception as e:
             connection.rollback()
             print(f"Error en préstamo: {e}")

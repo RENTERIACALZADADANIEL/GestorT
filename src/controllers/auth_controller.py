@@ -104,6 +104,34 @@ class AuthController:
         except Exception as e:
             return False, f"Error al eliminar usuario: {str(e)}"
     
+    def admin_cambiar_password(self, user_id, new_password, admin_id):
+        """
+        El admin cambia la contraseña de cualquier usuario sin necesitar la actual
+        Retorna: (success, message)
+        """
+        try:
+            if not new_password:
+                return False, "La contraseña no puede estar vacía"
+
+            if len(new_password) < 6:
+                return False, "La contraseña debe tener al menos 6 caracteres"
+
+            if user_id == admin_id:
+                return False, "Usa 'cambiar contraseña' para modificar tu propia cuenta"
+
+            usuario = Usuario.get_by_id(user_id)
+            if not usuario:
+                return False, "Usuario no encontrado"
+
+            result = usuario.update_password(new_password)
+            if result:
+                return True, f"Contraseña de '{usuario.username}' actualizada correctamente"
+            else:
+                return False, "Error al actualizar la contraseña"
+
+        except Exception as e:
+            return False, f"Error: {str(e)}"
+
     def cambiar_password(self, user_id, old_password, new_password):
         """
         Cambia la contraseña de un usuario
