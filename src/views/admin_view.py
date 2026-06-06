@@ -336,15 +336,29 @@ class AdminView:
         tk.Label(dialog, text=f"Nueva contraseña para '{username}':",
                  bg='#ecf0f1', font=('Arial', 10)).pack(pady=(20, 5))
 
-        pass_entry = tk.Entry(dialog, show="•", font=('Arial', 11), bd=2, relief='groove', width=28)
-        pass_entry.pack(pady=5)
+        pass_frame = tk.Frame(dialog, bg='#ecf0f1')
+        pass_frame.pack(pady=5)
+        pass_entry = tk.Entry(pass_frame, show="•", font=('Arial', 11), bd=2, relief='groove', width=25)
+        pass_entry.pack(side='left')
         pass_entry.focus()
+        _show1 = tk.BooleanVar(value=False)
+        def toggle1():
+            _show1.set(not _show1.get())
+            pass_entry.config(show='' if _show1.get() else '•')
+        tk.Button(pass_frame, text="👁", command=toggle1, bg='#ecf0f1', bd=1, cursor='hand2', font=('Arial', 11)).pack(side='left', padx=(5,0))
 
         tk.Label(dialog, text="Confirmar contraseña:",
                  bg='#ecf0f1', font=('Arial', 10)).pack(pady=(10, 5))
 
-        confirm_entry = tk.Entry(dialog, show="•", font=('Arial', 11), bd=2, relief='groove', width=28)
-        confirm_entry.pack(pady=5)
+        confirm_frame = tk.Frame(dialog, bg='#ecf0f1')
+        confirm_frame.pack(pady=5)
+        confirm_entry = tk.Entry(confirm_frame, show="•", font=('Arial', 11), bd=2, relief='groove', width=25)
+        confirm_entry.pack(side='left')
+        _show2 = tk.BooleanVar(value=False)
+        def toggle2():
+            _show2.set(not _show2.get())
+            confirm_entry.config(show='' if _show2.get() else '•')
+        tk.Button(confirm_frame, text="👁", command=toggle2, bg='#ecf0f1', bd=1, cursor='hand2', font=('Arial', 11)).pack(side='left', padx=(5,0))
 
         def confirmar():
             nueva = pass_entry.get().strip()

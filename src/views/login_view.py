@@ -70,14 +70,20 @@ class LoginView:
             fg='#2c3e50'
         ).pack(anchor='w', pady=(0, 5))
         
+        pass_frame = tk.Frame(fields_frame, bg='#f0f0f0')
+        pass_frame.pack(fill='x', pady=(0, 15))
         self.password_entry = tk.Entry(
-            fields_frame,
+            pass_frame,
             font=('Arial', 11),
             show="•",
             bd=2,
             relief='groove'
         )
-        self.password_entry.pack(fill='x', pady=(0, 15), ipady=5)
+        self.password_entry.pack(side='left', fill='x', expand=True, ipady=5)
+        self._show_pass_login = False
+        tk.Button(pass_frame, text="👁", command=self._toggle_pass_login,
+                  bg='#f0f0f0', bd=1, cursor='hand2', font=('Arial', 11)
+                  ).pack(side='left', padx=(5, 0))
         
         # Frame para botones
         buttons_frame = tk.Frame(main_frame, bg='#f0f0f0')
@@ -131,6 +137,10 @@ class LoginView:
             fg='#95a5a6'
         ).pack()
         
+    def _toggle_pass_login(self):
+        self._show_pass_login = not self._show_pass_login
+        self.password_entry.config(show='' if self._show_pass_login else '•')
+
         # Bind Enter key
         self.root.bind('<Return>', lambda event: self.login())
     

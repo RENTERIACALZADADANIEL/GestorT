@@ -3,6 +3,7 @@ from tkinter import messagebox, ttk
 from src.controllers.maestro_controller import MaestroController
 from src.controllers.prestamo_controller import PrestamoController
 from datetime import date
+from tkcalendar import DateEntry
 
 class MaestroView:
     def __init__(self, root, user_data, logout_callback):
@@ -94,10 +95,12 @@ class MaestroView:
         self.lab_combo.grid(row=0, column=1, padx=10, pady=5)
         self.lab_combo.bind('<<ComboboxSelected>>', self.cargar_bloques)
         
-        tk.Label(select_inner, text="Fecha (YYYY-MM-DD):", font=('Arial', 11), bg='#ecf0f1').grid(row=1, column=0, sticky='w', pady=5)
-        self.fecha_var = tk.StringVar(value=date.today().strftime('%Y-%m-%d'))
-        self.fecha_entry = tk.Entry(select_inner, textvariable=self.fecha_var, width=42, font=('Arial', 10))
-        self.fecha_entry.grid(row=1, column=1, padx=10, pady=5)
+        tk.Label(select_inner, text="Fecha:", font=('Arial', 11), bg='#ecf0f1').grid(row=1, column=0, sticky='w', pady=5)
+        self.fecha_entry = DateEntry(select_inner, width=40, font=('Arial', 10),
+                                     date_pattern='yyyy-mm-dd', background='#2c3e50',
+                                     foreground='white', borderwidth=2,
+                                     mindate=date.today())
+        self.fecha_entry.grid(row=1, column=1, padx=10, pady=5, sticky='w')
         
         tk.Button(
             select_inner,
@@ -133,7 +136,7 @@ class MaestroView:
             widget.destroy()
         
         lab_str = self.lab_combo.get()
-        fecha = self.fecha_var.get().strip()
+        fecha = self.fecha_entry.get_date().strftime('%Y-%m-%d')
         
         if not lab_str or not fecha:
             messagebox.showwarning("Atención", "Selecciona laboratorio y fecha")
@@ -185,7 +188,7 @@ class MaestroView:
         """Maneja la selección de un bloque y crea la reserva"""
         lab_str = self.lab_combo.get()
         lab_id = int(lab_str.split(' - ')[0])
-        fecha = self.fecha_var.get().strip()
+        fecha = self.fecha_entry.get_date().strftime('%Y-%m-%d')
         
         horas = bloque['horario_mostrar'].split(' - ')
         hora_inicio = horas[0]

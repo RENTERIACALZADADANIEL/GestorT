@@ -41,8 +41,15 @@ class RegistroView:
         
         # Password
         tk.Label(main_frame, text="Contraseña:", font=('Arial', 10), bg='#ecf0f1').pack(anchor='w', pady=(0, 5))
-        self.password_entry = tk.Entry(main_frame, font=('Arial', 10), show="•", width=40)
-        self.password_entry.pack(pady=(0, 10), ipady=3)
+        pass_frame = tk.Frame(main_frame, bg='#ecf0f1')
+        pass_frame.pack(fill='x', pady=(0, 10))
+        self.password_entry = tk.Entry(pass_frame, font=('Arial', 10), show="•", width=37)
+        self.password_entry.pack(side='left', ipady=3)
+        self._show_pass_reg = False
+        def toggle_reg():
+            self._show_pass_reg = not self._show_pass_reg
+            self.password_entry.config(show='' if self._show_pass_reg else '•')
+        tk.Button(pass_frame, text="👁", command=toggle_reg, bg='#ecf0f1', bd=1, cursor='hand2', font=('Arial', 10)).pack(side='left', padx=(5,0))
         
         # Rol
         tk.Label(main_frame, text="Rol:", font=('Arial', 10), bg='#ecf0f1').pack(anchor='w', pady=(0, 5))
