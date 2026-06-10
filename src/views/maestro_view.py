@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 from src.controllers.maestro_controller import MaestroController
 from src.controllers.prestamo_controller import PrestamoController
+from src.controllers.auth_controller import AuthController
 from datetime import date
 from tkcalendar import DateEntry
 
@@ -18,6 +19,7 @@ class MaestroView:
         self.maestro_controller.set_maestro(user_data)
         self.prestamo_controller = PrestamoController()
         self.prestamo_controller.set_usuario(user_data)
+        self.auth_controller = AuthController()
         
         self.setup_ui()
     
@@ -65,9 +67,14 @@ class MaestroView:
         self.tab_prestamos = tk.Frame(self.notebook, bg='#ecf0f1')
         self.notebook.add(self.tab_prestamos, text="📦 Préstamos")
         
+        # Pestaña Mi Cuenta
+        self.tab_mi_cuenta = tk.Frame(self.notebook, bg='#ecf0f1')
+        self.notebook.add(self.tab_mi_cuenta, text="🔑 Mi Cuenta")
+        
         self.setup_reservar_tab()
         self.setup_mis_reservas_tab()
         self.setup_prestamos_tab()
+        self.setup_mi_cuenta_tab()
     
     # ==================== RESERVAR LABORATORIO ====================
     def setup_reservar_tab(self):
@@ -527,6 +534,52 @@ class MaestroView:
         self.on_lab_selected_prestamo()
         self.cargar_mis_solicitudes()
     
+    # ==================== MI CUENTA ====================
+    def setup_mi_cuenta_tab(self):
+        """Configura la pestaña para cambiar contraseña propia del maestro"""
+        frame = tk.Frame(self.tab_mi_cuenta, bg='#ecf0f1')
+        frame.place(relx=0.5, rely=0.5, anchor='center')
+
+        tk.Label(frame, text="Cambiar mi contraseña", font=('Arial', 14, 'bold'),
+                 bg='#ecf0f1', fg='#2c3e50').grid(row=0, column=0, columnspan=2, pady=(0, 20))
+
+        labels = ["Contraseña actual:", "Nueva contraseña:", "Confirmar nueva contraseña:"]
+        self.cuenta_entries = []
+        for i, label in enumerate(labels):
+            tk.Label(frame, text=label, bg='#ecf0f1', font=('Arial', 11)).grid(row=i+1, column=0, sticky='e', pady=8, padx=(0, 10))
+            entry_frame = tk.Frame(frame, bg='#ecf0f1')
+            entry_frame.grid(row=i+1, column=1, pady=8)
+            entry = tk.Entry(entry_frame, show='•', font=('Arial', 11), width=25, bd=2, relief='groove')
+            entry.pack(side='left')
+            show_var = tk.BooleanVar(value=False)
+            def make_toggle(e=entry, v=show_var):
+                def toggle(): v.set(not v.get()); e.config(show='' if v.get() else '•')
+                return toggle
+            tk.Button(entry_frame, text='👁', command=make_toggle(), bg='#ecf0f1', bd=1, cursor='hand2').pack(side='left', padx=(5, 0))
+            self.cuenta_entries.append(entry)
+
+        tk.Button(
+            frame, text="Guardar nueva contraseña", command=self.cambiar_mi_password,
+            bg='#27ae60', fg='white', font=('Arial', 11), bd=0, padx=20, pady=8, cursor='hand2'
+        ).grid(row=5, column=0, columnspan=2, pady=20)
+
+    def cambiar_mi_password(self):
+        actual = self.cuenta_entries[0].get().strip()
+        nueva = self.cuenta_entries[1].get().strip()
+        confirmar = self.cuenta_entries[2].get().strip()
+
+        if nueva != confirmar:
+            messagebox.showerror("Error", "Las contraseñas nuevas no coinciden")
+            return
+
+        success, message = self.auth_controller.cambiar_password(self.user_data['id'], actual, nueva)
+        if success:
+            messagebox.showinfo("Éxito", message)
+            for e in self.cuenta_entries:
+                e.delete(0, tk.END)
+        else:
+            messagebox.showerror("Error", message)
+
     # ==================== CERRAR SESIÓN ====================
     def cerrar_sesion(self):
         """Cierra la sesión y vuelve al login"""

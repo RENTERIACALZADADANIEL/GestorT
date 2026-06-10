@@ -154,6 +154,10 @@ class AuthController:
             if usuario.password != Usuario.hash_password(old_password):
                 return False, "Contraseña actual incorrecta"
             
+            # Verificar que la nueva no sea igual a la actual
+            if Usuario.hash_password(new_password) == usuario.password:
+                return False, "La nueva contraseña no puede ser igual a la actual"
+            
             # Actualizar contraseña
             result = usuario.update_password(new_password)
             if result:

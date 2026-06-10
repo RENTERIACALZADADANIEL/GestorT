@@ -6,6 +6,8 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "mysql-connector-python>=9.7.0",
+    "pillow>=12.2.0",
+    "pyinstaller>=6.20.0",
     "python-dotenv>=1.2.2",
     "tkcalendar>=1.6.1",
 ]

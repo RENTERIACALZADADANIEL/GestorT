@@ -59,11 +59,15 @@ class AdminView:
         self.tab_prestamos = tk.Frame(self.notebook, bg='#ecf0f1')
         self.notebook.add(self.tab_prestamos, text="💰 Préstamos")
         
+        self.tab_mi_cuenta = tk.Frame(self.notebook, bg='#ecf0f1')
+        self.notebook.add(self.tab_mi_cuenta, text="🔑 Mi Cuenta")
+        
         self.setup_dashboard_tab()
         self.setup_laboratorios_tab()
         self.setup_usuarios_tab()
         self.setup_inventario_tab()
         self.setup_prestamos_admin_tab()
+        self.setup_mi_cuenta_tab()
     
     # ==================== DASHBOARD ====================
     def setup_dashboard_tab(self):
@@ -445,8 +449,14 @@ class AdminView:
         scrollbar.pack(side='right', fill='y')
         self.inv_tree.configure(yscrollcommand=scrollbar.set)
         
-        tk.Button(list_frame, text="Eliminar Item", command=self.eliminar_item,
-                 bg='#e74c3c', fg='white', font=('Arial', 10), bd=0, padx=15, pady=5, cursor='hand2').pack(pady=10)
+        btn_inv_frame = tk.Frame(list_frame, bg='#ecf0f1')
+        btn_inv_frame.pack(pady=10)
+
+        tk.Button(btn_inv_frame, text="✏️ Editar Cantidad", command=self.editar_cantidad_item,
+                 bg='#f39c12', fg='white', font=('Arial', 10), bd=0, padx=15, pady=5, cursor='hand2').pack(side='left', padx=5)
+
+        tk.Button(btn_inv_frame, text="Eliminar Item", command=self.eliminar_item,
+                 bg='#e74c3c', fg='white', font=('Arial', 10), bd=0, padx=15, pady=5, cursor='hand2').pack(side='left', padx=5)
         
         self.cargar_laboratorios_combo()
         self.cargar_inventario()
@@ -505,6 +515,53 @@ class AdminView:
                     item.get('cantidad_prestada', 0)
                 ))
     
+    def editar_cantidad_item(self):
+        """Abre dialog para editar la cantidad total de un item"""
+        selection = self.inv_tree.selection()
+        if not selection:
+            messagebox.showwarning("Atención", "Selecciona un item primero")
+            return
+
+        item = self.inv_tree.item(selection[0])
+        item_id   = item['values'][0]
+        item_nombre = item['values'][2]
+        cantidad_actual = item['values'][3]
+
+        dialog = tk.Toplevel(self.root)
+        dialog.title(f"Editar cantidad - {item_nombre}")
+        dialog.geometry("320x160")
+        dialog.resizable(False, False)
+        dialog.configure(bg='#ecf0f1')
+        dialog.grab_set()
+
+        tk.Label(dialog, text=f"Cantidad total para '{item_nombre}':",
+                 bg='#ecf0f1', font=('Arial', 10)).pack(pady=(20, 5))
+
+        cantidad_entry = tk.Entry(dialog, font=('Arial', 12), width=15, bd=2, relief='groove', justify='center')
+        cantidad_entry.insert(0, str(cantidad_actual))
+        cantidad_entry.select_range(0, tk.END)
+        cantidad_entry.pack(pady=5)
+        cantidad_entry.focus()
+
+        def confirmar():
+            valor = cantidad_entry.get().strip()
+            try:
+                nueva_cantidad = int(valor)
+            except ValueError:
+                messagebox.showerror("Error", "Ingresa un número entero válido", parent=dialog)
+                return
+            success, message = self.admin_controller.actualizar_cantidad_inventario(item_id, nueva_cantidad)
+            if success:
+                messagebox.showinfo("Éxito", message, parent=dialog)
+                dialog.destroy()
+                self.cargar_inventario()
+            else:
+                messagebox.showerror("Error", message, parent=dialog)
+
+        tk.Button(dialog, text="Guardar", command=confirmar,
+                 bg='#27ae60', fg='white', font=('Arial', 10), bd=0, padx=20, pady=5, cursor='hand2').pack(pady=12)
+        dialog.bind('<Return>', lambda e: confirmar())
+
     def eliminar_item(self):
         """Elimina un item del inventario"""
         selection = self.inv_tree.selection()
@@ -729,6 +786,52 @@ class AdminView:
                     estado_str, fecha_dev
                 ))
     
+    # ==================== MI CUENTA ====================
+    def setup_mi_cuenta_tab(self):
+        """Configura la pestaña para cambiar contraseña propia del admin"""
+        frame = tk.Frame(self.tab_mi_cuenta, bg='#ecf0f1')
+        frame.place(relx=0.5, rely=0.5, anchor='center')
+
+        tk.Label(frame, text="Cambiar mi contraseña", font=('Arial', 14, 'bold'),
+                 bg='#ecf0f1', fg='#2c3e50').grid(row=0, column=0, columnspan=2, pady=(0, 20))
+
+        labels = ["Contraseña actual:", "Nueva contraseña:", "Confirmar nueva contraseña:"]
+        self.cuenta_entries = []
+        for i, label in enumerate(labels):
+            tk.Label(frame, text=label, bg='#ecf0f1', font=('Arial', 11)).grid(row=i+1, column=0, sticky='e', pady=8, padx=(0, 10))
+            entry_frame = tk.Frame(frame, bg='#ecf0f1')
+            entry_frame.grid(row=i+1, column=1, pady=8)
+            entry = tk.Entry(entry_frame, show='•', font=('Arial', 11), width=25, bd=2, relief='groove')
+            entry.pack(side='left')
+            show_var = tk.BooleanVar(value=False)
+            def make_toggle(e=entry, v=show_var):
+                def toggle(): v.set(not v.get()); e.config(show='' if v.get() else '•')
+                return toggle
+            tk.Button(entry_frame, text='👁', command=make_toggle(), bg='#ecf0f1', bd=1, cursor='hand2').pack(side='left', padx=(5, 0))
+            self.cuenta_entries.append(entry)
+
+        tk.Button(
+            frame, text="Guardar nueva contraseña", command=self.cambiar_mi_password,
+            bg='#27ae60', fg='white', font=('Arial', 11), bd=0, padx=20, pady=8, cursor='hand2'
+        ).grid(row=5, column=0, columnspan=2, pady=20)
+
+    def cambiar_mi_password(self):
+        actual = self.cuenta_entries[0].get().strip()
+        nueva = self.cuenta_entries[1].get().strip()
+        confirmar = self.cuenta_entries[2].get().strip()
+
+        if nueva != confirmar:
+            messagebox.showerror("Error", "Las contraseñas nuevas no coinciden")
+            return
+
+        success, message = self.auth_controller.cambiar_password(self.user_data['id'], actual, nueva)
+        if success:
+            messagebox.showinfo("Éxito", message)
+            for e in self.cuenta_entries:
+                e.delete(0, tk.END)
+        else:
+            messagebox.showerror("Error", message)
+
     # ==================== CERRAR SESIÓN ====================
     def cerrar_sesion(self):
         """Cierra la sesión y vuelve al login"""

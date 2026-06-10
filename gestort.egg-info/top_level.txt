@@ -1,2 +1,5 @@
+build
+dist
+icons
 src
 venv

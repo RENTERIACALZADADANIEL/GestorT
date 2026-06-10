@@ -5,6 +5,8 @@ Summary: Sistema de Gestión de Laboratorios
 Requires-Python: >=3.12
 Description-Content-Type: text/markdown
 Requires-Dist: mysql-connector-python>=9.7.0
+Requires-Dist: pillow>=12.2.0
+Requires-Dist: pyinstaller>=6.20.0
 Requires-Dist: python-dotenv>=1.2.2
 Requires-Dist: tkcalendar>=1.6.1
 
